@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+
+<div class="col-xs-10 col-sm-6 col-md-6 ml-auto mr-auto">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <form action="" method="POST">
+                {{ form.csrf_token() }}
+                <fieldset class="form-group">
+                    <legend class="mb-4">Import Data</legend>
+                    <div class="form-group">
+                        {{ form.product_id.label(class="form-control-label") }}
+                        {% if form.product_id.errors %}
+                        {{ form.product_id(class="form-control form-control-sm is-invalid") }}
+                        {% for error in form.product_id.errors %}
+                        <div class="invalid-feedback">
+                            <span>{{error}}</span>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        {{ form.product_id(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.battery_type.label(class = "form-control-label") }}
+                        {{ form.battery_type(class = "form-control form-control-sm") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.run_name.label(class = "form-control-label") }}
+                        {{ form.run_name(class = "form-control form-control-sm") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.date.label(class = "form-control-label") }}
+                        {{ form.date(class = "form-control form-control-sm") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.units_produced.label(class = "form-control-label") }}
+                        {{ form.units_produced(class = "form-control form-control-sm") }}
+                    </div>
+
+                     <div class="form-group">
+                        {{ form.average_performance.label(class = "form-control-label") }}
+                        {{ form.average_performance(class = "form-control form-control-sm") }}
+                    </div>
+
+                    <div class="form-group border-bottom pb-3">
+                        {{ form.submit(class="btn btn-outline-info")}}
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

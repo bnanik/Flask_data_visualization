@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+
+<div class="col-xs-10 col-sm-6 col-md-6 ml-auto mr-auto">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                {{ form.csrf_token() }}
+                <fieldset class="form-group">
+                    <legend class="mb-4">Upload Data</legend>
+                    <div>
+                        <label class="form-label" for="customFile">Choose a CSV file</label>
+                        <input type="file" name="file" class="form-control" id="customFile" accept=".csv" />
+                        <br><br>
+                        <input type="submit" value="Upload" class="form-control" id="customFile" />
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+    {{ data|safe }}
+{% endblock %}

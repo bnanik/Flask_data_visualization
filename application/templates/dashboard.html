@@ -1,0 +1,270 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="visualization1"></canvas>
+            </div>
+            <div class="selectBox">
+                <select>
+                    <option value="">Average Performance</option>
+                    <option value="">Units Produced</option>
+                    <option value="">X</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="performance_over_time"></canvas>
+            </div>
+            <div class="selectBox">
+                <select id="performance_time_dropdown">
+                    <option value="Daily">Daily</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Yearly">Yearly</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="units_over_time"></canvas>
+            </div>
+            <div class="selectBox">
+                <select id="units_time_dropdown">
+                    <option value="Daily">Daily</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Yearly">Yearly</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="run_performance"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+
+{#<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
+
+<script>
+  Chart.scaleService.updateScaleDefaults('linear', {
+            ticks: {
+                min: 0
+            }
+    });
+
+
+  let battery_types_labels = JSON.parse({{ battery_labels | tojson }})
+  let battery_types_values = JSON.parse({{ battery_values | tojson }})
+  let visualization1_chart = new Chart(visualization1, {
+            type: 'pie',
+            data: {
+            labels: battery_types_labels,
+                datasets: [{
+                    label: "Visualization",
+                    data: battery_types_values,
+                    backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                        '#B276B2', '#E16851', '#FB8267'],
+
+                    borderWidth: 1,
+                    hoverBorderColor: "black",
+                    hoverBorderWidth: 2,
+                    hoverBackgroundColor: 'rgba(154, 245, 140)',
+                    pointHoverRadius: 5
+                }],
+            },
+            options: {
+                    title: {
+                        display: true,
+                            text: "Battery Types",
+                                fontSize: 20,
+                    },
+                    legend: {
+                        position: "right",
+                            labels: {
+                            fontColor: "gray"
+                        },
+                        display: true,
+                    },
+
+                    elements: {
+                        hitRadius: 3,
+                    }
+            }
+        })
+
+  let dates = JSON.parse({{ date_labels | tojson }})
+  let performance = JSON.parse({{ performance_values | tojson }})
+  let units = JSON.parse({{ units_values | tojson }})
+  let year_performance_values = JSON.parse({{ year_performance_values | tojson}})
+  let year_units_values = JSON.parse({{ year_units_values | tojson}})
+  let quarter_performance_values = JSON.parse({{ quarter_performance_values | tojson}})
+  let quarter_units_values = JSON.parse({{ quarter_units_values | tojson}})
+  let month_performance_values = JSON.parse({{ month_performance_values | tojson}})
+  let month_units_values = JSON.parse({{ month_units_values | tojson}})
+  let year_date_labels = JSON.parse({{ year_date_labels | tojson }})
+  let quarter_date_labels = JSON.parse({{ quarter_date_labels | tojson }})
+  let month_date_labels = JSON.parse({{ month_date_labels | tojson }})
+
+  const performance_time_ctx = document.getElementById('performance_over_time').getContext("2d");
+
+
+  let gradient = performance_time_ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, "rgba(58,123,213,1)");
+  gradient.addColorStop(1, "rgba(0,210,257,0.3)");
+
+  let performance_chart = new Chart(performance_time_ctx, {
+                type: "line",
+                data:
+                {
+                    labels: dates,
+                    datasets: [{
+                        label: "Performance Over Time",
+
+                        data: performance,
+                        fill: true,
+                        borderColor: "#fff",
+                        backgroundColor: gradient,
+                        lineTension: 0.4
+                    }]
+                },
+                options: {
+                    hitRadius: 50,
+                    hoverRadius: 20,
+                    responsive: true,
+                    title: {
+                        display: true,
+                            text: "Performance Over Time",
+                                fontSize: 20,
+                    },
+                }
+            });
+
+  const performance_time = document.getElementById('performance_time_dropdown');
+  performance_time.addEventListener('change', performance_time_abstraction);
+
+  function performance_time_abstraction(){
+      console.log(performance_time.value)
+      if (performance_time.value == "Daily"){
+          performance_chart.data.datasets[0].data = performance
+          performance_chart.data.labels =  dates
+      } else if (performance_time.value == "Monthly"){
+          performance_chart.data.datasets[0].data = month_performance_values
+          performance_chart.data.labels =  month_date_labels
+      } else if (performance_time.value == "Quarterly"){
+          performance_chart.data.datasets[0].data = quarter_performance_values
+          performance_chart.data.labels =  quarter_date_labels
+      } else if (performance_time.value == "Yearly"){
+          performance_chart.data.datasets[0].data = year_performance_values
+          performance_chart.data.labels =  year_date_labels
+      }
+
+      performance_chart.update()
+
+}
+  const units_time_ctx = document.getElementById("units_over_time").getContext("2d");
+
+  let units_gradient = units_time_ctx.createLinearGradient(0, 0, 0, 400);
+  units_gradient.addColorStop(0, "rgba(0,212,255,1)");
+  units_gradient.addColorStop(1, "rgba(58,9,121,0.56)");
+
+  let units_chart = new Chart(units_time_ctx, {
+                type: "line",
+                data:
+                {
+                    labels: dates,
+                    datasets: [{
+                        label: "Performance Over Time",
+
+                        data: units,
+                        fill: true,
+                        borderColor: "#fff",
+                        backgroundColor: units_gradient,
+                        lineTension: 0.4
+                    }]
+                },
+                options: {
+                    hitRadius: 50,
+                    hoverRadius: 20,
+                    responsive: true,
+                    title: {
+                        display: true,
+                            text: "Units Produced Over Time",
+                                fontSize: 20,
+                    },
+                }
+            });
+
+  const units_time = document.getElementById('units_time_dropdown');
+  units_time.addEventListener('change', units_time_abstraction);
+
+  function units_time_abstraction(){
+      console.log(units_time.value)
+      if (units_time.value == "Daily"){
+          units_chart.data.datasets[0].data = units
+          units_chart.data.labels =  dates
+      } else if (units_time.value == "Monthly"){
+          units_chart.data.datasets[0].data = month_units_values
+          units_chart.data.labels =  month_date_labels
+      } else if (units_time.value == "Quarterly"){
+          units_chart.data.datasets[0].data = quarter_units_values
+          units_chart.data.labels =  quarter_date_labels
+      } else if (units_time.value == "Yearly"){
+          units_chart.data.datasets[0].data = year_units_values
+          units_chart.data.labels =  year_date_labels
+      }
+
+      units_chart.update()
+
+}
+
+  let run_labels = JSON.parse({{ run_labels | tojson }})
+  let run_values = JSON.parse({{ run_values | tojson }})
+  let run_chart = new Chart(document.getElementById("run_performance"), {
+                type: "bar",
+                data:
+                {
+                    labels: run_labels,
+                    datasets: [{
+                        label: "Run Performance",
+
+                        data: run_values,
+                        backgroundColor: "rgba(54, 162, 235, 0.2)",
+                        borderColor: "rgb(75, 192, 192)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                            text: "Run Performance",
+                                fontSize: 20,
+                    },
+                }
+            });
+
+
+</script>
+{% endblock %}
+{% endblock %}
