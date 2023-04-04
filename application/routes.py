@@ -35,8 +35,9 @@ def upload():
         df['year'] = df['newdate'].dt.year
         df['quarter'] = df['newdate'].dt.quarter
         df['month'] = df['newdate'].dt.month_name(locale='English')
-        # data = data.to_dict('records')
-        # return render_template('view_csv.html', data=data, headers=list(data[0].keys()))
+        # df.reset_index(inplace=True)
+        # df = df.to_dict('records')
+        # return render_template('view_data.html', df=df, headers=list(df[0].keys()))
 
 
         flash("Uploaded Successfully!", 'success')
@@ -44,6 +45,20 @@ def upload():
         # print(df)
         # return 'uploaded Successfully'
     return render_template('upload.html', title='Upload', form=form)
+
+@app.route('/edit/<int:row>', methods=['GET', 'POST'])
+def edit_data(row):
+    if request.method == 'GET':
+        return render_template('edit_data.html', row=row)
+    else:
+        da = request.form.to_dict(flat=False)
+        for key, value in da.items():
+            da[key] = value[0]
+        # Get the original DataFrame from wherever it's stored
+        # Update the row with the new data
+        # Store the updated DataFrame wherever it needs to go
+        return redirect(url_for('view_data'))
+
 @app.route('/add', methods=['GET', 'POST'])
 def add_data():
     global data
