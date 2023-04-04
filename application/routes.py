@@ -8,7 +8,6 @@ from datetime import datetime
 import os
 import json
 
-data = []
 df = pd.DataFrame
 
 @app.route('/')
@@ -25,20 +24,23 @@ def upload():
     global df
     form = UserInputForm()
     if request.method == 'POST':
-        file = request.files['file']
-        # if file and allowed_file(file.filename):
-        #    filename = secure_filename(file.filename)
-        #    new_filename = f'{filename.split(".")[0]}_{str(datetime.now())}.csv'
-        #    file.save(os.path.join('input', new_filename))
-
-        df = pd.read_csv(file)
+        files = request.files.getlist('file')
+        dfs = []
+        for file in files:
+            data = pd.read_csv(file)
+            dfs.append(data)
+        df = pd.concat(dfs, ignore_index=True)
         df['newdate'] = pd.to_datetime(df['Date'])
         df.sort_values(by='newdate', inplace=True)
         df['year'] = df['newdate'].dt.year
         df['quarter'] = df['newdate'].dt.quarter
         df['month'] = df['newdate'].dt.month_name(locale='English')
+        # data = data.to_dict('records')
+        # return render_template('view_csv.html', data=data, headers=list(data[0].keys()))
+
+
         flash("Uploaded Successfully!", 'success')
-        return render_template('upload.html', shape=df.shape, form=form, data=df.to_html())
+        return render_template('upload.html', form=form, data=df.to_html())
         # print(df)
         # return 'uploaded Successfully'
     return render_template('upload.html', title='Upload', form=form)
