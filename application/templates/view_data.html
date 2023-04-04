@@ -1,46 +1,227 @@
 {% extends 'layout.html' %}
 {% block content %}
- <h1>View CSV File</h1>
-    <table id="data" class="table table-striped">
-      <thead>
-        <tr>
-          {% for header in headers %}
-            <th>{{ header }}</th>
-          {% endfor %}
-          <th>Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in df %}
-          <tr>
-            {% for col in row.values() %}
-              <td>{{ col }}</td>
-            {% endfor %}
-            <td><a href="{{ url_for('edit_data', row=row['index']) }}">Edit</a></td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="container"><p><h1 align="center">View Data</h1></p>
+        <div class="table_wrapper">
+            <div class="table_title">
+                <div class="row">
+                    <div class="col-sm-8"><h3>Data Details</h3></div>
+                    <div class="col-sm-4">
+                        <a href="#btnAddModal" title="Add" data-toggle="modal">
+                            <button type="button" class="btn btn-info add-new" style="float: right;
+                                    height: 30px;
+                                    font-weight: bold;
+                                    font-size: 12px;
+                                    text-shadow: none;
+                                    min-width: 100px;
+                                    border-radius: 50px;
+                                    line-height: 13px;">
+                                    <i class="fa fa-plus"></i>Add New</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <table id="data" class="table table-striped">
+              <thead>
+                <tr>
+                  {% for header in headers %}
+                    <th>{{ header }}</th>
+                  {% endfor %}
+                  <th>Edit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in data %}
+                  <tr>
+                    {% for col in row.values() %}
+                      <td>{{ col }}</td>
+                    {% endfor %}
+                    <td>
+
+{#                        <a class="add" title="Add" data-toggle="tooltip" id="{{ row.index }}" style="display: none"><i class="fa fa-user-plus"></i></a>#}
+                        <a href="#editModal" class="edit" title="Edit" data-toggle="modal" id="{{ row.index }}"><i class="fa fa-pencil" data-toggle="tooltip"></i></a>
+                        <a class="#deletemodal" title="Delete" data-toggle="modal" id="{{ row.index }}"><i class="fa fa-trash-o" data-toggle="tooltip"></i></a>
+
+
+                    </td>
+                  </tr>
+                {% endfor %}
+
+              </tbody>
+            </table>
+        </div>
+    </div>
+    <!--Edit Modal -->
+                <div id="editModal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="post" action="/edit_data" id="editForm">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Edit Data</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="run_name">Run Name</label>
+                                        <input type="text" id="editRunName" name="editRunName" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date">Date</label>
+                                        <input type="date" id="editDate" name="editDate" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product_id">Product ID</label>
+                                        <input type="text" id="editProductId" name="editProductId" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="battery_type">Battery Type</label>
+                                        <select name="editBatteryType" id="editBatteryType" class="form-control" required>
+                                            <option value="Pouch">Pouch</option>
+                                            <option value="X">X</option>
+                                            <option value="Y">Y</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="units_produced">Units Produced</label>
+                                        <input type="number" id="editUnitsProduced" name="editUnitsProduced" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="average_performance">Average Performance</label>
+                                        <input type="number" id="editAveragePerformance" name="editAveragePerformance" class="form-control" required>
+                                    </div>
+                                    <input type="hidden" id="editRow" name="editRow">
+                                    <div class="modal-footer">
+                                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                        <input type="submit" class="btn btn-success" value="Save">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+              <!-- End of Edit Modal -->
+
+        <!--Add Modal -->
+                <div id="btnAddModal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="post" action="/add_data" id="addform">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Add New Data</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="run_name">Run Name</label>
+                                        <input type="text" name="run_name" id="run_name" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date">Date</label>
+                                        <input type="date" name="date" id="date" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="product_id">Product ID</label>
+                                        <input type="text" name="product_id" id="product_id" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="battery_type">Battery Type</label>
+                                        <select name="battery_type" id="battery_type" class="form-control" required>
+                                            <option value="Pouch">Pouch</option>
+                                            <option value="X">X</option>
+                                            <option value="Y">Y</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="units_produced">Units Produced</label>
+                                        <input type="number" name="units_produced" id="units_produced" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="average_performance">Average Performance</label>
+                                        <input type="number" name="average_performance" id="average_performance" class="form-control" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                        <input type="submit" class="btn btn-success" value="Add">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+              <!-- End of Add Modal -->
 {% endblock %}
 
 {% block scripts %}
+
+    <!-- Script for Add New Data Modal-->
+    <script>
+      const addModalButton = document.getElementById('btnAddModal');
+      const addModal = document.getElementById('addModal');
+
+      addModalButton.addEventListener('click', () => {
+          addModal.style.display = 'block';
+      });
+    </script>
+
+    <script>
+        // Function to populate the Edit Modal with previous data
+        function populateEditModal(row_index) {
+          // Get the values of the selected row from the DataFrame
+            var run_name = df.loc[row_index, 'Run Name'];
+            var date = df.loc[row_index, 'Date'];
+            var product_id = df.loc[row_index, 'Product ID'];
+            var battery_type = df.loc[row_index, 'Battery Type'];
+            var units_produced = df.loc[row_index, 'Units Produced'];
+            var average_performance = df.loc[row_index, 'Average Performance'];
+
+          // Set the values of the input fields in the Edit Modal
+          $('#editRunName').val(run_name);
+          $('#editDate').val(date);
+          $('#editProductId').val(product_id);
+          $('#editBatteryType').val(battery_type);
+          $('#editUnitsProduced').val(units_produced);
+          $('#editAveragePerformance').val(average_performance);
+
+          // Set the value of the hidden input field to the row index
+          $('#editRow').val(row_index);
+        }
+
+        // Function to handle the Edit button click event
+        function handleEditClick(row_index) {
+          // Populate the Edit Modal with previous data
+          populateEditModal(row_index);
+          // Show the Edit Modal
+          $('#editModal').modal('show');
+        }
+
+        // Attach the handleEditClick function to the Edit button for each row
+        $('.edit-btn').click(function() {
+          var row_index = $(this).attr('data-row');
+          handleEditClick(row_index);
+        });
+
+    </script>
   <script>
   //Using DataTable to provide searchable and orderable columns when viewing data.
     $(document).ready(function () {
       $('#data').DataTable({
         columns: [
-          {searchable: false},
           null,
           null,
           null,
+          null,
           {orderable: false, searchable: false},
           {orderable: false, searchable: false},
           {orderable: false, searchable: false},
           {orderable: false, searchable: false},
           {orderable: false, searchable: false},
-          {orderable: false, searchable: false},
-          {orderable: false, searchable: false},
-          {orderable: false, searchable: false}],
+          null,
+          {orderable: false, searchable: false}]
       });
     });
   </script>

@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -13,6 +15,43 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+           $('[data-toggle="tooltip"]').tooltip();
+           var actions = $("table td:last-child").html();
+           //Append table with a new row on add new button click
+            $(".add-new").click(function(){
+                $(this).attr("disabled", "disabled");
+                var index = $("table tbody tr:last-child").index();
+                var row = '<tr>' +
+                    '<td><input type="text" class="form-control" name="run_name" id="txtname" </td>' +
+                    '<td><input type="text" class="form-control" name="date" id="txtdate" </td>' +
+                    '<td><input type="text" class="form-control" name="product_id" id="txtproductid" </td>' +
+                    '<td><input type="text" class="form-control" name="battery_type" id="txtbatterytype" </td>' +
+                    '<td><input type="number" class="form-control" name="units_produced" id="txtunitsproduced" </td>' +
+                    '<td><input type="number" class="form-control" name="average_performance" id="txtaverageperformance" </td>' +
+                    '<td><input type="date" class="form-control" name="newdate" id="txtnewdate" </td>' +
+                    '<td><input type="text" class="form-control" name="year" id="txtyear" </td>' +
+                    '<td><input type="text" class="form-control" name="quarter" id="txtquarter" </td>' +
+                    '<td><input type="text" class="form-control" name="month" id="txtmonth" </td>' +
+                    '<td>' + actions + '<td>' +
+                    '<tr>';
+                $("table").append(row);
+                $("table tbody tr").eq(index + 1).find(".add, .edit, .delete").toggle();
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        });
+
+        //Edit row on edit button click
+        $(document).on("click", ".edit", function(){
+            $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+                if(i=='0'){
+                    var idname = 'txt'
+                }
+            })
+        })
+    </script>
 
     {% if title %}
         <title>Data Visualization - {{ title }}</title>
@@ -35,6 +74,7 @@
                         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div class="navbar-nav ml-auto mr-3">
                                 <a class="nav-item nav-link" href="{{ url_for('upload') }}">Import Data</a>
+                                <a class="nav-item nav-link" href="{{ url_for('view_data') }}">Explore/Edit Data</a>
                                 <a class="nav-item nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
                             </div>
                         </div>
@@ -71,6 +111,7 @@
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
     {% block scripts %}{% endblock %}
 </body>
 

@@ -14,6 +14,11 @@ df = pd.DataFrame
 def index():  # put application's code here
     return render_template('index.html', title='index')
 
+@app.route('/view_data')
+def view_data():  # put application's code here
+    data = df.to_dict('records')
+    headers = df.columns
+    return render_template('view_data.html', data=data, headers=headers)
 # ALLOWED_EXTENSIONS = set(['csv'])
 # def allowed_file(filename):
 #     return '.' in filename and \
@@ -27,53 +32,85 @@ def upload():
         files = request.files.getlist('file')
         dfs = []
         for file in files:
-            data = pd.read_csv(file)
-            dfs.append(data)
+            csv_file = pd.read_csv(file)
+            dfs.append(csv_file)
         df = pd.concat(dfs, ignore_index=True)
-        df['newdate'] = pd.to_datetime(df['Date'])
-        df.sort_values(by='newdate', inplace=True)
-        df['year'] = df['newdate'].dt.year
-        df['quarter'] = df['newdate'].dt.quarter
-        df['month'] = df['newdate'].dt.month_name(locale='English')
-        # df.reset_index(inplace=True)
-        # df = df.to_dict('records')
-        # return render_template('view_data.html', df=df, headers=list(df[0].keys()))
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.sort_values(by='Date', inplace=True)
+        df['year'] = df['Date'].dt.year
+        df['quarter'] = df['Date'].dt.quarter
+        df['month'] = df['Date'].dt.month_name(locale='English')
+        df.reset_index(inplace=True)
+        data = df.to_dict('records')
+        headers = df.columns
+        return render_template('view_data.html', data=data, headers=headers)
 
 
-        flash("Uploaded Successfully!", 'success')
-        return render_template('upload.html', form=form, data=df.to_html())
+        # flash("Uploaded Successfully!", 'success')
+        # return render_template('upload.html', form=form, data=df.to_html())
         # print(df)
         # return 'uploaded Successfully'
     return render_template('upload.html', title='Upload', form=form)
 
-@app.route('/edit/<int:row>', methods=['GET', 'POST'])
-def edit_data(row):
-    if request.method == 'GET':
-        return render_template('edit_data.html', row=row)
-    else:
-        da = request.form.to_dict(flat=False)
-        for key, value in da.items():
-            da[key] = value[0]
-        # Get the original DataFrame from wherever it's stored
-        # Update the row with the new data
-        # Store the updated DataFrame wherever it needs to go
-        return redirect(url_for('view_data'))
+@app.route('/edit_data', methods=['POST'])
+def edit_data():
+    global df
+    row_index = int(request.form['editRow'])
+    run_name = request.form['run_name']
+    date = request.form['date']
+    product_id = request.form['product_id']
+    battery_type = request.form['battery_type']
+    units_produced = request.form['units_produced']
+    average_performance = request.form['average_performance']
 
-@app.route('/add', methods=['GET', 'POST'])
+    # Update the values in the Pandas DataFrame
+    df.loc[row_index, 'Run Name'] = run_name
+    df.loc[row_index, 'Date'] = date
+    df.loc[row_index, 'Product ID'] = product_id
+    df.loc[row_index, 'Battery Type'] = battery_type
+    df.loc[row_index, 'Units Produced'] = units_produced
+    df.loc[row_index, 'Average Performance'] = average_performance
+
+    # Update Date related columns
+    df.loc[row_index, 'Date'] = pd.to_datetime(df.loc[row_index, 'Date'])
+    df.loc[row_index, 'year'] = df.loc[row_index, 'Date'].dt.year
+    df.loc[row_index, 'quarter'] = df.loc[row_index, 'Date'].dt.quarter
+    df.loc[row_index, 'month'] = df.loc[row_index, 'Date'].dt.month_name(locale='English')
+    data = df.to_dict('records')
+    return redirect(url_for("view_data", data=data, headers=df.columns))
+
+
+@app.route('/add_data', methods=['POST'])
 def add_data():
-    global data
-    form = UserInputForm()
-    if form.validate_on_submit():
-        battery_type = form.battery_type.data
-        run_name = form.run_name.data
-        product_id = form.product_id.data
-        date = form.date.data
-        units_produced = form.units_produced.data
-        average_performance = form.average_performance.data
-        data.append([product_id, battery_type, run_name, date, units_produced, average_performance])
-        flash("Successful entry", 'success')
-        return redirect(url_for('add_data'))
-    return render_template('add.html', title='add', form=form)
+    global df
+    run_name = request.form['run_name']
+    date = request.form['date']
+    product_id = request.form['product_id']
+    battery_type = request.form['battery_type']
+    units_produced = request.form['units_produced']
+    average_performance = request.form['average_performance']
+
+    # append the form data to the existing dataframe
+    new_row = {'Run Name': run_name,
+               'Date': date,
+               'Product ID': product_id,
+               'Battery Type': battery_type,
+               'Units Produced': units_produced,
+               'Average Performance': average_performance}
+    index_value = [len(df)]  # set the index value to the length of the existing dataframe
+    df_new = pd.DataFrame(new_row, index=[index_value])
+    df_new['Date'] = pd.to_datetime(df_new['Date'])
+    df_new['year'] = df_new['Date'].dt.year
+    df_new['quarter'] = df_new['Date'].dt.quarter
+    df_new['month'] = df_new['Date'].dt.month_name(locale='English')
+    df = df.append(df_new)
+
+    data = df.to_dict('records')
+    headers = df.columns
+    return render_template('view_data.html', data=data, headers=headers)
+
+
+
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -92,7 +129,7 @@ def dashboard():
     return render_template("dashboard.html",
                            battery_labels=json.dumps(list(battery_types.keys()), cls=NpEncoder),
                            battery_values=json.dumps(list(battery_types.values), cls=NpEncoder),
-                           date_labels=json.dumps(list(df['Date']), cls=NpEncoder),
+                           date_labels=json.dumps(list(df['Date'].dt.strftime('%Y-%m-%d')), cls=NpEncoder),
                            performance_values=json.dumps(list(df['Average Performance']), cls=NpEncoder),
                            units_values=json.dumps(list(df['Units Produced']), cls=NpEncoder),
                            run_labels=json.dumps(df.groupby(['Run Name'])['Average Performance'].mean().keys().tolist(), cls=NpEncoder),
