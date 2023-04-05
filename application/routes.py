@@ -46,7 +46,7 @@ def upload():
         # return render_template('upload.html', form=form, data=df.to_html())
         # print(df)
         # return 'uploaded Successfully'
-    return render_template('upload.html', title='Upload', form=form)
+    return render_template('index.html', title='Upload', form=form)
 
 @app.route('/edit_data', methods=['POST'])
 def edit_data():
