@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<!--Performance Over Time chart canvas-->
 
 <div class="col-xs-10 col-sm-6 col-md-6">
     <div class="card card-style mb-2">
@@ -15,10 +16,14 @@
                     <option value="Quarterly">Quarterly</option>
                     <option value="Yearly">Yearly</option>
                 </select>
+                <a href="#">Download PDF</a>
             </div>
         </div>
     </div>
 </div>
+
+
+<!--Units Produced Over Time chart canvas-->
 
 <div class="col-xs-10 col-sm-6 col-md-6">
     <div class="card card-style mb-2">
@@ -33,26 +38,33 @@
                     <option value="Quarterly">Quarterly</option>
                     <option value="Yearly">Yearly</option>
                 </select>
+                <a href="#">Download PDF</a>
             </div>
         </div>
     </div>
 </div>
+
+    <!-- Battery Types distribution chart canvas-->
 
 <div class="col-xs-10 col-sm-6 col-md-6">
     <div class="card card-style mb-2">
         <div class="card-body">
             <div class="chart-container" style="position: relative;">
                 <canvas id="visualization1"></canvas>
+                <a href="#">Download PDF</a>
             </div>
         </div>
     </div>
 </div>
+
+    <!--Performance over Run Names chart canvas-->
 
 <div class="col-xs-10 col-sm-6 col-md-6">
     <div class="card card-style mb-2">
         <div class="card-body">
             <div class="chart-container" style="position: relative;">
                 <canvas id="run_performance"></canvas>
+                <a href="#">Download PDF</a>
             </div>
         </div>
     </div>
@@ -72,6 +84,7 @@
 
   let battery_types_labels = JSON.parse({{ battery_labels | tojson }})
   let battery_types_values = JSON.parse({{ battery_values | tojson }})
+
   let visualization1_chart = new Chart(visualization1, {
             type: 'pie',
             data: {
@@ -236,6 +249,10 @@
 
   let run_labels = JSON.parse({{ run_labels | tojson }})
   let run_values = JSON.parse({{ run_values | tojson }})
+
+  {#let bar_gradient = run_performance1.createLinearGradient(0, 0, 0, 400);#}
+  {#bar_gradient.addColorStop(0, "rgba(0,212,255,1)");#}
+  {#bar_gradient.addColorStop(1, "rgba(58,9,121,0.56)");#}
   let run_chart = new Chart(document.getElementById("run_performance"), {
                 type: "bar",
                 data:

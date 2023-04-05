@@ -2,12 +2,13 @@ from flask_wtf import FlaskForm
 from wtforms.fields import StringField, DateField, SelectField, IntegerField, SubmitField
 from wtforms.validators import DataRequired
 
+
 class UserInputForm(FlaskForm):
     battery_type = SelectField('Battery Type', validators=[DataRequired()],
-                          choices=[('Pouch', 'Pouch'),
-                                     ('X', 'X'),
-                                     ('Y', 'Y')
-                                    ])
+                               choices=[('Pouch', 'Pouch'),
+                                        ('X', 'X'),
+                                        ('Y', 'Y')
+                                        ])
     run_name = StringField('Run Name', validators=[DataRequired()])
     product_id = IntegerField('Product ID', validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()])

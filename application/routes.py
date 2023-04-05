@@ -59,7 +59,10 @@ def edit_data():
     units_produced = request.form['editUnitsProduced']
     average_performance = request.form['editAveragePerformance']
 
-
+    # Server side Data Validation
+    errors = {}
+    if not run_name[0].isalpha():
+        errors['run_name'] = ["The first and second character of Run Name field should be alphabet"]
     # Update the values in the Pandas DataFrame
     df.loc[row_index, 'Run Name'] = run_name
     df.loc[row_index, 'Date'] = date
@@ -74,7 +77,7 @@ def edit_data():
     # df.loc[row_index, 'quarter'] = df.loc[row_index, 'Date'].dt.quarter
     # df.loc[row_index, 'month'] = df.loc[row_index, 'Date'].dt.month_name(locale='English')
     # data = df.to_dict('records')
-    return redirect(url_for("view_data", df=df, headers=df.columns))
+    return redirect(url_for("view_data", df=df, headers=df.columns, errors=errors))
 
 
 @app.route('/add_data', methods=['POST'])
@@ -137,8 +140,8 @@ def dashboard():
                            quarter_date_labels=json.dumps(df.groupby(['year', 'quarter'])['Average Performance'].mean().keys().tolist(), cls=NpEncoder),
                            quarter_performance_values=json.dumps(df.groupby(['year', 'quarter'])['Average Performance'].mean().values.tolist(), cls=NpEncoder),
                            quarter_units_values=json.dumps(df.groupby(['year', 'quarter'])['Units Produced'].sum().values.tolist(), cls=NpEncoder),
-                           month_date_labels=json.dumps(df.groupby(['year', 'month'])['Average Performance'].mean().keys().tolist(), cls=NpEncoder),
-                           month_performance_values=json.dumps(df.groupby(['year', 'month'])['Average Performance'].mean().values.tolist(), cls=NpEncoder),
+                           month_date_labels=json.dumps(df.groupby(['month', 'year'])['Average Performance'].mean().keys().tolist(), cls=NpEncoder),
+                           month_performance_values=json.dumps(df.groupby(['month', 'year'])['Average Performance'].mean().values.tolist(), cls=NpEncoder),
                            month_units_values=json.dumps(df.groupby(['year', 'month'])['Units Produced'].sum().values.tolist(), cls=NpEncoder),
 
 

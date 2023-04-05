@@ -61,7 +61,9 @@
                                             <label for="run_name">Run Name</label>
                                             <input type="hidden"  name="id" value="{{i}}">
 
-                                            <input type="text" id="editRunName" name="editRunName" class="form-control" value="{{ row.iloc[1] }}" required>
+                                            <input type="text" id="editRunName" name="editRunName"
+                                                   class="form-control" value="{{ row.iloc[1] }}"
+                                                   minlength="6" maxlength="6" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="date">Date</label>
@@ -69,7 +71,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="product_id">Product ID</label>
-                                            <input type="text" id="editProductId" name="editProductId" class="form-control" value="{{ row.iloc[3] }}" required>
+                                            <input type="text" id="editProductId" name="editProductId"
+                                                   class="form-control" value="{{ row.iloc[3] }}"
+                                                   minlength="6" maxlength="6" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="battery_type">Battery Type</label>
@@ -119,7 +123,8 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="run_name">Run Name</label>
-                                        <input type="text" name="run_name" id="run_name" class="form-control" required>
+                                        <input type="text" name="run_name" id="run_name"
+                                               class="form-control" minlength="6" maxlength="6" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="date">Date</label>
@@ -127,7 +132,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="product_id">Product ID</label>
-                                        <input type="text" name="product_id" id="product_id" class="form-control" required>
+                                        <input type="text" name="product_id" id="product_id"
+                                               class="form-control" minlength="6" maxlength="6" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="battery_type">Battery Type</label>
@@ -160,40 +166,39 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        $('#modaledit{{ i }}').on('click', '#save-btn', function() {
+      // Get the updated values from the form fields in the Edit Modal
+      let updatedData = {
 
-                            <script>
-    $('#modaledit{{ i }}').on('click', '#save-btn', function() {
-  // Get the updated values from the form fields in the Edit Modal
-  let updatedData = {
+        'col1': $('#editRunName').val(),
+        'col2': $('#editDate').val(),
+        'col3': $('#editProductId').val(),
+        'col4': $('#editBatteryType').val(),
+        'col5': $('#editUnitsProduced').val(),
+        'col6': $('#editAveragePerformance').val()
 
-    'col1': $('#editRunName').val(),
-    'col2': $('#editDate').val(),
-    'col3': $('#editProductId').val(),
-    'col4': $('#editBatteryType').val(),
-    'col5': $('#editUnitsProduced').val(),
-    'col6': $('#editAveragePerformance').val()
+      };
 
-  };
-
-  // Get the row index of the row being edited
-  let rowIndex = $('#id').val();
+      // Get the row index of the row being edited
+      let rowIndex = $('#id').val();
 
 
-  // Update the HTML table with the new values
-  let $row = $('#data tbody tr').eq(rowIndex);
-  $row.find('.col1').text(updatedData['col1']);
-  $row.find('.col2').text(updatedData['col2']);
-  $row.find('.col3').text(updatedData['col3']);
-  $row.find('.col4').text(updatedData['col4']);
-  $row.find('.col5').text(updatedData['col5']);
-  $row.find('.col6').text(updatedData['col6']);
+      // Update the HTML table with the new values
+      let $row = $('#data tbody tr').eq(rowIndex);
+      $row.find('.col1').text(updatedData['col1']);
+      $row.find('.col2').text(updatedData['col2']);
+      $row.find('.col3').text(updatedData['col3']);
+      $row.find('.col4').text(updatedData['col4']);
+      $row.find('.col5').text(updatedData['col5']);
+      $row.find('.col6').text(updatedData['col6']);
 
-  // Hide the Edit Modal
-  $('#modaledit{{ i }}').modal('hide');
+      // Hide the Edit Modal
+      $('#modaledit{{ i }}').modal('hide');
 
-  // Reload the page to display the updated data
-  location.reload();
-});
+      // Reload the page to display the updated data
+      location.reload();
+    });
     </script>
 
     <!-- Script for Add New Data Modal-->
