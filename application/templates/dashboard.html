@@ -9,15 +9,17 @@
             <div class="chart-container" style="position: relative;">
                 <canvas id="performance_over_time"></canvas>
             </div>
-            <div class="selectBox">
-                <select id="performance_time_dropdown">
-                    <option value="Daily">Daily</option>
-                    <option value="Monthly">Monthly</option>
-                    <option value="Quarterly">Quarterly</option>
-                    <option value="Yearly">Yearly</option>
-                </select>
-                <a href="#">Download PDF</a>
-            </div>
+                <div class="selectBox">
+                     <input onchange="filterDate()" type="date" id="startDate" >
+                     <input onchange="filterDate()" type="date" id="endDate" >
+                    <select id="performance_time_dropdown">
+                        <option value="Daily">Daily</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                    <a href="#">Download PDF</a>
+                </div>
         </div>
     </div>
 </div>
@@ -32,6 +34,8 @@
                 <canvas id="units_over_time"></canvas>
             </div>
             <div class="selectBox">
+                <input onchange="filterDate()" type="date" id="unitsStartDate" >
+                <input onchange="filterDate()" type="date" id="unitsEndDate" >
                 <select id="units_time_dropdown">
                     <option value="Daily">Daily</option>
                     <option value="Monthly">Monthly</option>
@@ -72,9 +76,11 @@
 
 {% block javascript %}
 
-{#<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
+
 
 <script>
+    // Register ChartjsPluginSorting
+    {#Chart.register(ChartjsPluginSorting)#}
   Chart.scaleService.updateScaleDefaults('linear', {
             ticks: {
                 min: 0
@@ -148,7 +154,7 @@
                 {
                     labels: dates,
                     datasets: [{
-                        label: "Performance Over Time",
+                        label: "Average Performance",
 
                         data: performance,
                         fill: true,
@@ -169,8 +175,29 @@
                 }
             });
 
+  function filterDate(){
+      const dates1 = [...dates];
+      console.log(dates1)
+      console.log(dates)
+      const startDate = document.getElementById('startDate');
+      const endDate = document.getElementById('endDate');
+
+      //get the index number in the dates list
+      const indexstartdate = dates1.indexOf(startDate.value);
+      const indexenddate = dates1.indexOf(endDate.value);
+
+      // only show the selected dates
+      const filterDate = dates1.slice(indexstartdate, indexenddate + 1);
+        console.log(filterDate);
+      // replace the labels in the chart
+      performance_chart.data.labels = filterDate;
+      performance_chart.update();
+
+  }
+
   const performance_time = document.getElementById('performance_time_dropdown');
   performance_time.addEventListener('change', performance_time_abstraction);
+
 
   function performance_time_abstraction(){
       console.log(performance_time.value)
@@ -203,7 +230,7 @@
                 {
                     labels: dates,
                     datasets: [{
-                        label: "Performance Over Time",
+                        label: "Units Produced",
 
                         data: units,
                         fill: true,
@@ -262,7 +289,15 @@
                         label: "Run Performance",
 
                         data: run_values,
-                        backgroundColor: "rgba(54, 162, 235, 0.2)",
+                        backgroundColor: [
+                                          'rgba(255, 26, 104, 0.2)',
+                                          'rgba(54, 162, 235, 0.2)',
+                                          'rgba(255, 206, 86, 0.2)',
+                                          'rgba(75, 192, 192, 0.2)',
+                                          'rgba(153, 102, 255, 0.2)',
+                                          'rgba(255, 159, 64, 0.2)',
+                                          'rgba(0, 0, 0, 0.2)'
+                                        ],
                         borderColor: "rgb(75, 192, 192)",
                         borderWidth: 1
                     }]

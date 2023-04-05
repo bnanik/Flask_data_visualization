@@ -51,12 +51,13 @@
                 <div id="modaledit{{ i }}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
+                            <form action="{{ url_for('edit_data') }}" method="POST">
                                 <div class="modal-header">
-                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <h4 class="modal-title">Edit Data</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{ url_for('edit_data') }}" method="POST">
+
                                         <div class="form-group">
                                             <label for="run_name">Run Name</label>
                                             <input type="hidden"  name="id" value="{{i}}">
@@ -97,8 +98,8 @@
                                             <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                                             <input type="submit" id="save-btn" name="save-btn" class="btn btn-success" value="Save">
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                         </div>
                     </div>
 
@@ -211,62 +212,6 @@
       });
     </script>
 
-    <script>
-        let df
-        // JavaScript code
-
-        $(document).ready(function() {
-          // Load the dataframe from Flask endpoint
-          $.ajax({
-            url: '/upload',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-              df = response.data;
-              {#populateTable(df);#}
-            }
-          });
-        });
-
-
-        // Function to populate the Edit Modal with previous data
-        function populateEditModal(row_index, df) {
-          // Get the values of the selected row from the DataFrame
-            let run_name = df.loc[row_index, 'Run Name'];
-            let date = df.loc[row_index, 'Date'];
-            let product_id = df.loc[row_index, 'Product ID'];
-            let battery_type = df.loc[row_index, 'Battery Type'];
-            let units_produced = df.loc[row_index, 'Units Produced'];
-            let average_performance = df.loc[row_index, 'Average Performance'];
-
-          // Set the values of the input fields in the Edit Modal
-          $('#editRunName').val(run_name);
-          $('#editDate').val(date);
-          $('#editProductId').val(product_id);
-          $('#editBatteryType').val(battery_type);
-          $('#editUnitsProduced').val(units_produced);
-          $('#editAveragePerformance').val(average_performance);
-
-          // Set the value of the hidden input field to the row index
-          $('#editRow').val(row_index);
-        }
-
-        // Function to handle the Edit button click event
-        function handleEditClick(row_index, df) {
-          // Populate the Edit Modal with previous data
-          populateEditModal(row_index, df);
-          // Show the Edit Modal
-          $('#editModal').modal('show');
-        }
-
-        // Attach the handleEditClick function to the Edit button for each row
-        $('.edit-btn').click(function() {
-          let row_index = $(this).attr('data-row');
-          console.log('Row index:', row_index);
-          handleEditClick(row_index, df);
-        });
-
-    </script>
   <script>
   //Using DataTable to provide searchable and orderable columns when viewing data.
     $(document).ready(function () {

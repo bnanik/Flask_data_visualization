@@ -4,7 +4,8 @@ from application import app
 from flask import render_template, flash, redirect, url_for, get_flashed_messages, request
 from application.form import UserInputForm
 from werkzeug.utils import secure_filename
-from datetime import datetime
+import datetime
+from datetime import date
 import os
 import json
 
@@ -17,6 +18,7 @@ def index():  # put application's code here
 
 @app.route('/view_data')
 def view_data():  # put application's code here
+    global df
     headers = df.columns
     return render_template('view_data.html', df=df, headers=headers)
 
@@ -31,7 +33,7 @@ def upload():
             csv_file = pd.read_csv(file)
             dfs.append(csv_file)
         df = pd.concat(dfs, ignore_index=True)
-        df['Date'] = pd.to_datetime(df['Date'])
+        df['Date'] = pd.to_datetime(df['Date'], format='%b %d %Y')
         # df.sort_values(by='Date', inplace=True)
         df['year'] = df['Date'].dt.year
         df['quarter'] = df['Date'].dt.quarter
@@ -53,11 +55,13 @@ def edit_data():
     global df
     row_index = request.form['id']
     run_name = request.form['editRunName']
-    date = request.form['editDate']
-    product_id = request.form['editProductId']
+    date1 = request.form['editDate']
+    product_id = int(request.form['editProductId'])
     battery_type = request.form['editBatteryType']
-    units_produced = request.form['editUnitsProduced']
-    average_performance = request.form['editAveragePerformance']
+    units_produced = int(request.form['editUnitsProduced'])
+    average_performance = int(request.form['editAveragePerformance'])
+    print(row_index)
+    print(type(df))
 
     # Server side Data Validation
     errors = {}
@@ -65,7 +69,7 @@ def edit_data():
         errors['run_name'] = ["The first and second character of Run Name field should be alphabet"]
     # Update the values in the Pandas DataFrame
     df.loc[row_index, 'Run Name'] = run_name
-    df.loc[row_index, 'Date'] = date
+    df.loc[row_index, 'Date'] = date1
     df.loc[row_index, 'Product ID'] = product_id
     df.loc[row_index, 'Battery Type'] = battery_type
     df.loc[row_index, 'Units Produced'] = units_produced
@@ -84,15 +88,15 @@ def edit_data():
 def add_data():
     global df
     run_name = request.form['run_name']
-    date = request.form['date']
+    date1 = request.form['date']
     product_id = request.form['product_id']
     battery_type = request.form['battery_type']
-    units_produced = request.form['units_produced']
-    average_performance = request.form['average_performance']
+    units_produced = int(request.form['units_produced'])
+    average_performance = int(request.form['average_performance'])
 
     # append the form data to the existing dataframe
     new_row = {'Run Name': run_name,
-               'Date': date,
+               'Date': date1,
                'Product ID': product_id,
                'Battery Type': battery_type,
                'Units Produced': units_produced,
