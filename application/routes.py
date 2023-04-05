@@ -12,17 +12,13 @@ df = pd.DataFrame
 
 @app.route('/')
 def index():  # put application's code here
-    return render_template('index.html', title='index')
+    form = UserInputForm()
+    return render_template('index.html', title='index', form=form)
 
 @app.route('/view_data')
 def view_data():  # put application's code here
-    data = df.to_dict('records')
     headers = df.columns
-    return render_template('view_data.html', data=data, headers=headers)
-# ALLOWED_EXTENSIONS = set(['csv'])
-# def allowed_file(filename):
-#     return '.' in filename and \
-#             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return render_template('view_data.html', df=df, headers=headers)
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -36,17 +32,17 @@ def upload():
             dfs.append(csv_file)
         df = pd.concat(dfs, ignore_index=True)
         df['Date'] = pd.to_datetime(df['Date'])
-        df.sort_values(by='Date', inplace=True)
+        # df.sort_values(by='Date', inplace=True)
         df['year'] = df['Date'].dt.year
         df['quarter'] = df['Date'].dt.quarter
         df['month'] = df['Date'].dt.month_name(locale='English')
         df.reset_index(inplace=True)
-        data = df.to_dict('records')
-        headers = df.columns
-        return render_template('view_data.html', data=data, headers=headers)
-
-
         # flash("Uploaded Successfully!", 'success')
+        headers = df.columns
+        return render_template('view_data.html', df=df, headers=headers)
+
+
+        #
         # return render_template('upload.html', form=form, data=df.to_html())
         # print(df)
         # return 'uploaded Successfully'
@@ -55,13 +51,14 @@ def upload():
 @app.route('/edit_data', methods=['POST'])
 def edit_data():
     global df
-    row_index = int(request.form['editRow'])
-    run_name = request.form['run_name']
-    date = request.form['date']
-    product_id = request.form['product_id']
-    battery_type = request.form['battery_type']
-    units_produced = request.form['units_produced']
-    average_performance = request.form['average_performance']
+    row_index = request.form['id']
+    run_name = request.form['editRunName']
+    date = request.form['editDate']
+    product_id = request.form['editProductId']
+    battery_type = request.form['editBatteryType']
+    units_produced = request.form['editUnitsProduced']
+    average_performance = request.form['editAveragePerformance']
+
 
     # Update the values in the Pandas DataFrame
     df.loc[row_index, 'Run Name'] = run_name
@@ -72,12 +69,12 @@ def edit_data():
     df.loc[row_index, 'Average Performance'] = average_performance
 
     # Update Date related columns
-    df.loc[row_index, 'Date'] = pd.to_datetime(df.loc[row_index, 'Date'])
-    df.loc[row_index, 'year'] = df.loc[row_index, 'Date'].dt.year
-    df.loc[row_index, 'quarter'] = df.loc[row_index, 'Date'].dt.quarter
-    df.loc[row_index, 'month'] = df.loc[row_index, 'Date'].dt.month_name(locale='English')
-    data = df.to_dict('records')
-    return redirect(url_for("view_data", data=data, headers=df.columns))
+    # df.loc[row_index, 'Date'] = pd.to_datetime(df.loc[row_index, 'Date'])
+    # df.loc[row_index, 'year'] = df.loc[row_index, 'Date'].dt.year
+    # df.loc[row_index, 'quarter'] = df.loc[row_index, 'Date'].dt.quarter
+    # df.loc[row_index, 'month'] = df.loc[row_index, 'Date'].dt.month_name(locale='English')
+    # data = df.to_dict('records')
+    return redirect(url_for("view_data", df=df, headers=df.columns))
 
 
 @app.route('/add_data', methods=['POST'])
@@ -107,7 +104,7 @@ def add_data():
 
     data = df.to_dict('records')
     headers = df.columns
-    return render_template('view_data.html', data=data, headers=headers)
+    return render_template('view_data.html', df=df, data=data, headers=headers)
 
 
 

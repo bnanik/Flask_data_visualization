@@ -1,34 +1,26 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-{#    <div class="col-sm-10 ml-auto mr-auto ">#}
-{#        <H2>Transaction History</H2>#}
-{#        <table class="table">#}
-{#            <thead class="thead-dark">#}
-{#                <tr>#}
-{#                    <th scope="col">Run Name</th>#}
-{#                    <th scope="col">Date</th>#}
-{#                    <th scope="col">Product ID</th>#}
-{#                    <th scope="col">Battery Type</th>#}
-{#                    <th scope="col">Units Produced</th>#}
-{#                    <th scope="col">Average Performance</th>#}
-{#                </tr>#}
-{#            </thead>#}
-{#            <tbody>#}
-{#                {% for row in df.iterrows(self) %}#}
-{#                        <tr>#}
-{#                            <th scope="row">{{row['Run Name']}}</th>#}
-{#                            <td>{{row['Date'].strftime("%m-%d-%Y")}}</td>#}
-{#                            <td>{{row['Product ID']}}</td>#}
-{#                            <td>{{row['Battery Type']}}</td>#}
-{#                            <td>{{ row['Units Produced'] }}</td>#}
-{#                            <td>{{ row['Average Performance'] }}</td>#}
-{#                            <td><a href="#" class="btn btn-outline-danger btn-sm">Delete</a></td>#}
-{#                        </tr>#}
-{#                {% endfor %}#}
-{#        </tbody>#}
-{#        </table>#}
-{#    </div>#}
+<div class="col-xs-10 col-sm-6 col-md-6 ml-auto mr-auto">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                {{ form.csrf_token() }}
+                <fieldset class="form-group">
+                    <legend class="mb-4">Upload Data</legend>
+                    <div>
+                        <label class="form-label" for="customFile">Choose a CSV file</label>
+                        <input type="file" name="file" class="form-control" id="customFile" accept=".csv" multiple/>
+                        <br><br>
+                        <input type="submit" value="Upload" class="form-control" id="customFile" />
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+{#    {{ data|safe }}#}
 
 {% endblock %}
 {#{{ url_for('delete', entry_id = entry.id) }}#}

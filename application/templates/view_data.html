@@ -32,76 +32,79 @@
                 </tr>
               </thead>
               <tbody>
-                {% for row in data %}
+                {% for i, row in df.iterrows() %}
                   <tr>
-                    {% for col in row.values() %}
+                    {% for col in row.values.tolist() %}
                       <td>{{ col }}</td>
                     {% endfor %}
                     <td>
 
-{#                        <a class="add" title="Add" data-toggle="tooltip" id="{{ row.index }}" style="display: none"><i class="fa fa-user-plus"></i></a>#}
-                        <a href="#editModal" class="edit" title="Edit" data-toggle="modal" id="{{ row.index }}"><i class="fa fa-pencil" data-toggle="tooltip"></i></a>
-                        <a class="#deletemodal" title="Delete" data-toggle="modal" id="{{ row.index }}"><i class="fa fa-trash-o" data-toggle="tooltip"></i></a>
+                        <a href="/edit_data/{{i}}" class="edit-btn" data-toggle="modal" data-target="#modaledit{{i}}"><i class="fa fa-pencil" data-toggle="tooltip"></i></a>
+                        <a href="/delete/{{ i }}" class="delete-btn" onclick="return confirm('Are You Sure For Delete?')"><i class="fa fa-trash-o" data-toggle="tooltip"></i></a>
+
 
 
                     </td>
                   </tr>
-                {% endfor %}
+
+    <!--Edit Modal -->
+                <div id="modaledit{{ i }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Edit Data</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ url_for('edit_data') }}" method="POST">
+                                        <div class="form-group">
+                                            <label for="run_name">Run Name</label>
+                                            <input type="hidden"  name="id" value="{{i}}">
+
+                                            <input type="text" id="editRunName" name="editRunName" class="form-control" value="{{ row.iloc[1] }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="date">Date</label>
+                                            <input type="date" id="editDate" name="editDate" class="form-control" value="{{ row.iloc[2] }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="product_id">Product ID</label>
+                                            <input type="text" id="editProductId" name="editProductId" class="form-control" value="{{ row.iloc[3] }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="battery_type">Battery Type</label>
+                                            <select name="editBatteryType" id="editBatteryType" class="form-control" value="{{ row.iloc[4] }}" required>
+                                                <option value="Pouch">Pouch</option>
+                                                <option value="X">X</option>
+                                                <option value="Y">Y</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="units_produced">Units Produced</label>
+                                            <input type="number" id="editUnitsProduced" name="editUnitsProduced" class="form-control" value="{{ row.iloc[5] }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="average_performance">Average Performance</label>
+                                            <input type="number" id="editAveragePerformance" name="editAveragePerformance" class="form-control" value="{{ row.iloc[6] }}" required>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                            <input type="submit" id="save-btn" name="save-btn" class="btn btn-success" value="Save">
+                                        </div>
+                                    </form>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
 
               </tbody>
             </table>
         </div>
     </div>
-    <!--Edit Modal -->
-                <div id="editModal" class="modal fade">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="post" action="/edit_data" id="editForm">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Edit Data</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="run_name">Run Name</label>
-                                        <input type="text" id="editRunName" name="editRunName" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="date">Date</label>
-                                        <input type="date" id="editDate" name="editDate" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="product_id">Product ID</label>
-                                        <input type="text" id="editProductId" name="editProductId" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="battery_type">Battery Type</label>
-                                        <select name="editBatteryType" id="editBatteryType" class="form-control" required>
-                                            <option value="Pouch">Pouch</option>
-                                            <option value="X">X</option>
-                                            <option value="Y">Y</option>
-
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="units_produced">Units Produced</label>
-                                        <input type="number" id="editUnitsProduced" name="editUnitsProduced" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="average_performance">Average Performance</label>
-                                        <input type="number" id="editAveragePerformance" name="editAveragePerformance" class="form-control" required>
-                                    </div>
-                                    <input type="hidden" id="editRow" name="editRow">
-                                    <div class="modal-footer">
-                                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                        <input type="submit" class="btn btn-success" value="Save">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
               <!-- End of Edit Modal -->
 
         <!--Add Modal -->
@@ -158,6 +161,41 @@
 
 {% block scripts %}
 
+                            <script>
+    $('#modaledit{{ i }}').on('click', '#save-btn', function() {
+  // Get the updated values from the form fields in the Edit Modal
+  let updatedData = {
+
+    'col1': $('#editRunName').val(),
+    'col2': $('#editDate').val(),
+    'col3': $('#editProductId').val(),
+    'col4': $('#editBatteryType').val(),
+    'col5': $('#editUnitsProduced').val(),
+    'col6': $('#editAveragePerformance').val()
+
+  };
+
+  // Get the row index of the row being edited
+  let rowIndex = $('#id').val();
+
+
+  // Update the HTML table with the new values
+  let $row = $('#data tbody tr').eq(rowIndex);
+  $row.find('.col1').text(updatedData['col1']);
+  $row.find('.col2').text(updatedData['col2']);
+  $row.find('.col3').text(updatedData['col3']);
+  $row.find('.col4').text(updatedData['col4']);
+  $row.find('.col5').text(updatedData['col5']);
+  $row.find('.col6').text(updatedData['col6']);
+
+  // Hide the Edit Modal
+  $('#modaledit{{ i }}').modal('hide');
+
+  // Reload the page to display the updated data
+  location.reload();
+});
+    </script>
+
     <!-- Script for Add New Data Modal-->
     <script>
       const addModalButton = document.getElementById('btnAddModal');
@@ -169,15 +207,32 @@
     </script>
 
     <script>
+        let df
+        // JavaScript code
+
+        $(document).ready(function() {
+          // Load the dataframe from Flask endpoint
+          $.ajax({
+            url: '/upload',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+              df = response.data;
+              {#populateTable(df);#}
+            }
+          });
+        });
+
+
         // Function to populate the Edit Modal with previous data
-        function populateEditModal(row_index) {
+        function populateEditModal(row_index, df) {
           // Get the values of the selected row from the DataFrame
-            var run_name = df.loc[row_index, 'Run Name'];
-            var date = df.loc[row_index, 'Date'];
-            var product_id = df.loc[row_index, 'Product ID'];
-            var battery_type = df.loc[row_index, 'Battery Type'];
-            var units_produced = df.loc[row_index, 'Units Produced'];
-            var average_performance = df.loc[row_index, 'Average Performance'];
+            let run_name = df.loc[row_index, 'Run Name'];
+            let date = df.loc[row_index, 'Date'];
+            let product_id = df.loc[row_index, 'Product ID'];
+            let battery_type = df.loc[row_index, 'Battery Type'];
+            let units_produced = df.loc[row_index, 'Units Produced'];
+            let average_performance = df.loc[row_index, 'Average Performance'];
 
           // Set the values of the input fields in the Edit Modal
           $('#editRunName').val(run_name);
@@ -192,17 +247,18 @@
         }
 
         // Function to handle the Edit button click event
-        function handleEditClick(row_index) {
+        function handleEditClick(row_index, df) {
           // Populate the Edit Modal with previous data
-          populateEditModal(row_index);
+          populateEditModal(row_index, df);
           // Show the Edit Modal
           $('#editModal').modal('show');
         }
 
         // Attach the handleEditClick function to the Edit button for each row
         $('.edit-btn').click(function() {
-          var row_index = $(this).attr('data-row');
-          handleEditClick(row_index);
+          let row_index = $(this).attr('data-row');
+          console.log('Row index:', row_index);
+          handleEditClick(row_index, df);
         });
 
     </script>

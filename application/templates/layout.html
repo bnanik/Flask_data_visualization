@@ -15,43 +15,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function(){
-           $('[data-toggle="tooltip"]').tooltip();
-           var actions = $("table td:last-child").html();
-           //Append table with a new row on add new button click
-            $(".add-new").click(function(){
-                $(this).attr("disabled", "disabled");
-                var index = $("table tbody tr:last-child").index();
-                var row = '<tr>' +
-                    '<td><input type="text" class="form-control" name="run_name" id="txtname" </td>' +
-                    '<td><input type="text" class="form-control" name="date" id="txtdate" </td>' +
-                    '<td><input type="text" class="form-control" name="product_id" id="txtproductid" </td>' +
-                    '<td><input type="text" class="form-control" name="battery_type" id="txtbatterytype" </td>' +
-                    '<td><input type="number" class="form-control" name="units_produced" id="txtunitsproduced" </td>' +
-                    '<td><input type="number" class="form-control" name="average_performance" id="txtaverageperformance" </td>' +
-                    '<td><input type="date" class="form-control" name="newdate" id="txtnewdate" </td>' +
-                    '<td><input type="text" class="form-control" name="year" id="txtyear" </td>' +
-                    '<td><input type="text" class="form-control" name="quarter" id="txtquarter" </td>' +
-                    '<td><input type="text" class="form-control" name="month" id="txtmonth" </td>' +
-                    '<td>' + actions + '<td>' +
-                    '<tr>';
-                $("table").append(row);
-                $("table tbody tr").eq(index + 1).find(".add, .edit, .delete").toggle();
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-        });
-
-        //Edit row on edit button click
-        $(document).on("click", ".edit", function(){
-            $(this).parents("tr").find("td:not(:last-child)").each(function(i){
-                if(i=='0'){
-                    var idname = 'txt'
-                }
-            })
-        })
-    </script>
 
     {% if title %}
         <title>Data Visualization - {{ title }}</title>
@@ -66,15 +31,15 @@
             <div class="col-md-12 p-0">
                 <header class="mb-4">
                     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                        <a class="navbar-brand" href="{{ url_for('index') }}">Data Visualization</a>
+                        <a class="navbar-brand" href="{{ url_for('index') }}">LeydenJar Technologies </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div class="navbar-nav ml-auto mr-3">
-                                <a class="nav-item nav-link" href="{{ url_for('upload') }}">Import Data</a>
-                                <a class="nav-item nav-link" href="{{ url_for('view_data') }}">Explore/Edit Data</a>
+                                <a class="nav-item nav-link" href="{{ url_for('index') }}">Import Data</a>
+                                <a class="nav-item nav-link" href="{{ url_for('view_data') }}">Explore Data</a>
                                 <a class="nav-item nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
                             </div>
                         </div>
