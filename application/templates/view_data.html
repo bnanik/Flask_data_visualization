@@ -123,6 +123,21 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
+{#                                        {{ form.run_name.label }} <br>#}
+{#                                        {{ form.run_name(size=56, id="run_name", class="form-control") }}#}
+{#                                        <br>#}
+{#                                        {% if form.run_name.errors %}#}
+{#                                        <ul class="errors">#}
+{#                                            {% for error in form.run_name.errors %}#}
+{#                                                <li>{{ error }}</li>#}
+{#                                            {% endfor %}#}
+{#                                            <script>#}
+{#                                                let run_name = document.querySelector("#run_name")#}
+{#                                                run_name.style.border = "3px solid red";#}
+{#                                            </script>#}
+{##}
+{#                                        </ul>#}
+{#                                        {% endif %}#}
                                         <label for="run_name">Run Name</label>
                                         <input type="text" name="run_name" id="run_name"
                                                class="form-control" minlength="6" maxlength="6" required>

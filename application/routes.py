@@ -19,8 +19,9 @@ def index():  # put application's code here
 @app.route('/view_data')
 def view_data():  # put application's code here
     global df
+    form = UserInputForm()
     headers = df.columns
-    return render_template('view_data.html', df=df, headers=headers)
+    return render_template('view_data.html', df=df, headers=headers, form=form)
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -53,20 +54,19 @@ def upload():
 @app.route('/edit_data', methods=['POST'])
 def edit_data():
     global df
-    row_index = request.form['id']
+    row_index = int(request.form['id'])
     run_name = request.form['editRunName']
     date1 = request.form['editDate']
     product_id = int(request.form['editProductId'])
     battery_type = request.form['editBatteryType']
     units_produced = int(request.form['editUnitsProduced'])
     average_performance = int(request.form['editAveragePerformance'])
-    print(row_index)
-    print(type(df))
 
     # Server side Data Validation
     errors = {}
     if not run_name[0].isalpha():
         errors['run_name'] = ["The first and second character of Run Name field should be alphabet"]
+
     # Update the values in the Pandas DataFrame
     df.loc[row_index, 'Run Name'] = run_name
     df.loc[row_index, 'Date'] = date1
@@ -77,11 +77,14 @@ def edit_data():
 
     # Update Date related columns
     # df.loc[row_index, 'Date'] = pd.to_datetime(df.loc[row_index, 'Date'])
-    # df.loc[row_index, 'year'] = df.loc[row_index, 'Date'].dt.year
-    # df.loc[row_index, 'quarter'] = df.loc[row_index, 'Date'].dt.quarter
-    # df.loc[row_index, 'month'] = df.loc[row_index, 'Date'].dt.month_name(locale='English')
-    # data = df.to_dict('records')
-    return redirect(url_for("view_data", df=df, headers=df.columns, errors=errors))
+    new_date = pd.to_datetime(df.loc[row_index, 'Date'])
+    df.loc[row_index, 'year'] = new_date.year
+    df.loc[row_index, 'quarter'] = new_date.quarter
+    df.loc[row_index, 'month'] = new_date.month_name(locale='English')
+
+    data = df.to_dict('records')
+    headers = df.columns
+    return render_template('view_data.html', df=df, data=data, headers=headers)
 
 
 @app.route('/add_data', methods=['POST'])
@@ -101,7 +104,7 @@ def add_data():
                'Battery Type': battery_type,
                'Units Produced': units_produced,
                'Average Performance': average_performance}
-    index_value = [len(df)]  # set the index value to the length of the existing dataframe
+    index_value = int(len(df))  # set the index value to the length of the existing dataframe
     df_new = pd.DataFrame(new_row, index=[index_value])
     df_new['Date'] = pd.to_datetime(df_new['Date'])
     df_new['year'] = df_new['Date'].dt.year
