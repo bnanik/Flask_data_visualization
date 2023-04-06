@@ -10,8 +10,8 @@
                 <canvas id="performance_over_time"></canvas>
             </div>
                 <div class="selectBox">
-                     <input onchange="filterDate()" type="date" id="startDate" >
-                     <input onchange="filterDate()" type="date" id="endDate" >
+{#                     <input onchange="filterDate()" type="date" id="startDate" >#}
+{#                     <input onchange="filterDate()" type="date" id="endDate" >#}
                     <select id="performance_time_dropdown">
                         <option value="Daily">Daily</option>
                         <option value="Monthly">Monthly</option>
@@ -34,8 +34,8 @@
                 <canvas id="units_over_time"></canvas>
             </div>
             <div class="selectBox">
-                <input onchange="filterDate()" type="date" id="unitsStartDate" >
-                <input onchange="filterDate()" type="date" id="unitsEndDate" >
+{#                <input onchange="filterDate()" type="date" id="unitsStartDate" >#}
+{#                <input onchange="filterDate()" type="date" id="unitsEndDate" >#}
                 <select id="units_time_dropdown">
                     <option value="Daily">Daily</option>
                     <option value="Monthly">Monthly</option>
@@ -160,7 +160,7 @@
                         fill: true,
                         borderColor: "#fff",
                         backgroundColor: gradient,
-                        lineTension: 0.4
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -221,8 +221,8 @@
   const units_time_ctx = document.getElementById("units_over_time").getContext("2d");
 
   let units_gradient = units_time_ctx.createLinearGradient(0, 0, 0, 400);
-  units_gradient.addColorStop(0, "rgba(0,212,255,1)");
-  units_gradient.addColorStop(1, "rgba(58,9,121,0.56)");
+  units_gradient.addColorStop(0, "rgba(0,212,25,1)");
+  units_gradient.addColorStop(1, "rgba(58,9,12,0.26)");
 
   let units_chart = new Chart(units_time_ctx, {
                 type: "line",

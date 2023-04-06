@@ -35,10 +35,12 @@ def upload():
             dfs.append(csv_file)
         df = pd.concat(dfs, ignore_index=True)
         df['Date'] = pd.to_datetime(df['Date'], format='%b %d %Y')
+
         # df.sort_values(by='Date', inplace=True)
         df['year'] = df['Date'].dt.year
         df['quarter'] = df['Date'].dt.quarter
         df['month'] = df['Date'].dt.month_name(locale='English')
+        # df['Date'] = df['Date'].dt.date
         df.reset_index(inplace=True)
         # flash("Uploaded Successfully!", 'success')
         headers = df.columns
